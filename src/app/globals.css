@@ -1,0 +1,231 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Bengali font loaded via layout.tsx head tag */
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: 'Noto Sans Bengali', var(--font-geist-sans), sans-serif;
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  
+  /* Custom colors for Apon Foundation */
+  --color-apon-green: #1B5E20;
+  --color-apon-red: #8B0000;
+  --color-apon-gold: #D4AF37;
+  --color-apon-cream: #FDF5E6;
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: #FDF5E6;
+  --foreground: #1a1a1a;
+  --card: #ffffff;
+  --card-foreground: #1a1a1a;
+  --popover: #ffffff;
+  --popover-foreground: #1a1a1a;
+  --primary: #1B5E20;
+  --primary-foreground: #ffffff;
+  --secondary: #8B0000;
+  --secondary-foreground: #ffffff;
+  --muted: #f5f5f5;
+  --muted-foreground: #666666;
+  --accent: #D4AF37;
+  --accent-foreground: #1a1a1a;
+  --destructive: #dc2626;
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #1B5E20;
+  --chart-1: #1B5E20;
+  --chart-2: #8B0000;
+  --chart-3: #D4AF37;
+  --chart-4: #2e7d32;
+  --chart-5: #a00000;
+  --sidebar: #ffffff;
+  --sidebar-foreground: #1a1a1a;
+  --sidebar-primary: #1B5E20;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f5f5f5;
+  --sidebar-accent-foreground: #1a1a1a;
+  --sidebar-border: #e5e5e5;
+  --sidebar-ring: #1B5E20;
+}
+
+.dark {
+  --background: #1a1a1a;
+  --foreground: #FDF5E6;
+  --card: #2a2a2a;
+  --card-foreground: #FDF5E6;
+  --popover: #2a2a2a;
+  --popover-foreground: #FDF5E6;
+  --primary: #4caf50;
+  --primary-foreground: #1a1a1a;
+  --secondary: #ff6b6b;
+  --secondary-foreground: #1a1a1a;
+  --muted: #333333;
+  --muted-foreground: #cccccc;
+  --accent: #ffd700;
+  --accent-foreground: #1a1a1a;
+  --destructive: #ef4444;
+  --border: #404040;
+  --input: #404040;
+  --ring: #4caf50;
+  --chart-1: #4caf50;
+  --chart-2: #ff6b6b;
+  --chart-3: #ffd700;
+  --chart-4: #66bb6a;
+  --chart-5: #ff8a80;
+  --sidebar: #2a2a2a;
+  --sidebar-foreground: #FDF5E6;
+  --sidebar-primary: #4caf50;
+  --sidebar-primary-foreground: #1a1a1a;
+  --sidebar-accent: #333333;
+  --sidebar-accent-foreground: #FDF5E6;
+  --sidebar-border: #404040;
+  --sidebar-ring: #4caf50;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Noto Sans Bengali', var(--font-geist-sans), sans-serif;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1B5E20;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2e7d32;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom button styles */
+.btn-green {
+  background-color: #1B5E20;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-green:hover {
+  background-color: #2e7d32;
+}
+
+.btn-red {
+  background-color: #8B0000;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-red:hover {
+  background-color: #a00000;
+}
+
+.btn-gold {
+  background-color: #D4AF37;
+  color: #1a1a1a;
+  transition: all 0.3s ease;
+}
+
+.btn-gold:hover {
+  background-color: #e5c158;
+}
+
+/* Gradient text */
+.text-gradient {
+  background: linear-gradient(135deg, #1B5E20, #D4AF37);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Card hover effect */
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Section styles */
+.section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1B5E20;
+  margin-bottom: 1.5rem;
+}
+
+/* Arabic text styling */
+.arabic-text {
+  font-family: 'Traditional Arabic', 'Scheherazade New', serif;
+  font-size: 1.5rem;
+  direction: rtl;
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white !important;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+}

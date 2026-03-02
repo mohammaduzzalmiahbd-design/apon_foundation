@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sheets সিঙ্ক সেটআপ - আপন ফাউন্ডেশন</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: linear-gradient(135deg, #1B5E20 0%, #2e7d32 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { 
+            color: #1B5E20; 
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        .step {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #1B5E20;
+        }
+        .step-number {
+            background: #1B5E20;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .step-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .step-content {
+            color: #555;
+            line-height: 1.8;
+        }
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .success-box {
+            background: #d4edda;
+            border: 1px solid #28a745;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .btn {
+            display: inline-block;
+            background: #1B5E20;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 5px;
+        }
+        .btn:hover { background: #2e7d32; }
+        .text-center { text-align: center; }
+        img { max-width: 100%; border-radius: 8px; margin: 10px 0; }
+        ul { padding-left: 20px; margin: 10px 0; }
+        li { margin: 5px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 Google Sheets সিঙ্ক সেটআপ</h1>
+        <p class="subtitle">একবার সেটআপ করলে সব ডাটা Google-এ সিঙ্ক হবে!</p>
+
+        <div class="warning-box">
+            <strong>✨ সুবিধা:</strong>
+            <ul>
+                <li>ফ্রি এবং সীমাহীন স্টোরেজ</li>
+                <li>যেকোনো ডিভাইস থেকে অ্যাক্সেস</li>
+                <li>অটোমেটিক ব্যাকআপ</li>
+                <li>বারবার ডিপ্লয় করতে হবে না</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <span class="step-number">১</span>
+            <span class="step-title">Google Sheets তৈরি করুন</span>
+            <div class="step-content">
+                <ol>
+                    <li><a href="https://sheets.google.com" target="_blank">sheets.google.com</a> গিয়ে সাইন ইন করুন</li>
+                    <li><span class="highlight">+ Blank</span> ক্লিক করে নতুন Spreadsheet তৈরি করুন</li>
+                    <li>নাম দিন: <strong>"আপন ফাউন্ডেশন ডাটা"</strong></li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">২</span>
+            <span class="step-title">Apps Script খুলুন</span>
+            <div class="step-content">
+                <ol>
+                    <li>Google Sheets-এ <span class="highlight">Extensions</span> → <span class="highlight">Apps Script</span> ক্লিক করুন</li>
+                    <li>নতুন ট্যাবে Apps Script এডিটর খুলবে</li>
+                    <li>বাম পাশে <strong>Code.gs</strong> ফাইলে থাকুন</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">৩</span>
+            <span class="step-title">কোড পেস্ট করুন</span>
+            <div class="step-content">
+                <p>নিচের ফাইল থেকে কোড কপি করুন:</p>
+                <p><strong>ফাইল:</strong> <code>download/google-apps-script.js</code></p>
+                <p>অথবা এই কোড কপি করুন:</p>
+                <div class="code-block">
+// Google Sheets Sync Code
+const SHEET_NAME = 'Data';
+
+function doGet(e) {
+  const action = e.parameter.action || 'load';
+  if (action === 'load') {
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+    if (!sheet) {
+      SpreadsheetApp.getActiveSpreadsheet().insertSheet(SHEET_NAME);
+      return ContentService.createTextOutput(JSON.stringify({success: true, data: {}}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    const data = sheet.getDataRange().getValues();
+    const result = {};
+    for (let i = 1; i < data.length; i++) {
+      if (data[i][0] && data[i][1]) {
+        try { result[data[i][0]] = JSON.parse(data[i][1]); } 
+        catch(e) { result[data[i][0]] = data[i][1]; }
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({success: true, data: result}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doPost(e) {
+  try {
+    const body = JSON.parse(e.postData.contents);
+    if (body.action === 'save') {
+      let sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+      if (!sheet) sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(SHEET_NAME);
+      sheet.clear();
+      sheet.appendRow(['Key', 'Value', 'Updated']);
+      for (const [k, v] of Object.entries(body.data)) {
+        sheet.appendRow([k, JSON.stringify(v), new Date().toISOString()]);
+      }
+      return ContentService.createTextOutput(JSON.stringify({success: true}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({success: false, error: err.message}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">৪</span>
+            <span class="step-title">Deploy করুন</span>
+            <div class="step-content">
+                <ol>
+                    <li>উপরে <span class="highlight">Deploy</span> → <span class="highlight">New deployment</span> ক্লিক করুন</li>
+                    <li>গিয়ার আইকন ⚙️ ক্লিক করে <span class="highlight">Web app</span> সিলেক্ট করুন</li>
+                    <li>Settings:
+                        <ul>
+                            <li><strong>Execute as:</strong> Me</li>
+                            <li><strong>Who has access:</strong> Anyone</li>
+                        </ul>
+                    </li>
+                    <li><span class="highlight">Deploy</span> ক্লিক করুন</li>
+                    <li>অনুমতি দিন (Authorize করুন)</li>
+                    <li><span class="highlight">Web app URL</span> কপি করুন</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">৫</span>
+            <span class="step-title">Vercel-এ Environment Variable সেট করুন</span>
+            <div class="step-content">
+                <ol>
+                    <li>Vercel Dashboard এ যান</li>
+                    <li>Project → Settings → Environment Variables</li>
+                    <li>নতুন Variable যোগ করুন:</li>
+                </ol>
+                <div class="code-block">
+Name:  NEXT_PUBLIC_GOOGLE_SCRIPT_URL
+Value: আপনার Deployed URL (যেমন: https://script.google.com/macros/s/xxx/exec)
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">৬</span>
+            <span class="step-title">Redeploy করুন</span>
+            <div class="step-content">
+                <p>Vercel Dashboard থেকে Deployments → সর্বশেষ deployment → Redeploy ক্লিক করুন।</p>
+            </div>
+        </div>
+
+        <div class="success-box">
+            <h3>✅ সেটআপ সম্পন্ন!</h3>
+            <p>এখন থেকে:</p>
+            <ul>
+                <li>সব ডাটা Google Sheets-এ সিঙ্ক হবে</li>
+                <li>গঠনতন্ত্র, সদস্য, নোটিশ সব স্থায়ীভাবে থাকবে</li>
+                <li>বারবার ডিপ্লয় করতে হবে না</li>
+            </ul>
+        </div>
+
+        <div class="text-center" style="margin-top: 30px;">
+            <a href="https://sheets.google.com" target="_blank" class="btn">📁 Google Sheets খুলুন</a>
+        </div>
+    </div>
+</body>
+</html>

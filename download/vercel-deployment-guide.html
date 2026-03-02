@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vercel ডিপ্লয়মেন্ট গাইড - আপন ফাউন্ডেশন</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', 'Noto Sans Bengali', sans-serif; 
+            background: linear-gradient(135deg, #1B5E20 0%, #2e7d32 100%);
+            min-height: 100vh;
+            padding: 15px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            padding: 30px 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        h1 { 
+            color: #1B5E20; 
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+        .step {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid #1B5E20;
+        }
+        .step-number {
+            background: #1B5E20;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 14px;
+        }
+        .step-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .step-content {
+            color: #555;
+            line-height: 1.7;
+            font-size: 14px;
+        }
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            margin: 10px 0;
+            word-break: break-all;
+        }
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .success-box {
+            background: #d4edda;
+            border: 1px solid #28a745;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px 0;
+        }
+        .info-box {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px 0;
+        }
+        .btn {
+            display: inline-block;
+            background: #1B5E20;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .btn:hover { background: #2e7d32; }
+        .btn-blue { background: #1976d2; }
+        .btn-blue:hover { background: #1565c0; }
+        .text-center { text-align: center; }
+        ul { padding-left: 20px; margin: 8px 0; }
+        li { margin: 4px 0; }
+        .emoji { font-size: 18px; }
+        img { max-width: 100%; border-radius: 8px; margin: 10px 0; }
+        .divider {
+            border-top: 2px dashed #ddd;
+            margin: 20px 0;
+        }
+        .accordion {
+            background: #f0f0f0;
+            border-radius: 8px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .accordion-header {
+            padding: 12px 15px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .accordion-content {
+            padding: 15px;
+            background: white;
+            display: none;
+        }
+        .accordion-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Vercel ডিপ্লয়মেন্ট গাইড</h1>
+        <p class="subtitle">আপন ফাউন্ডেশন ওয়েবসাইট ফ্রিতে অনলাইনে আনুন</p>
+
+        <div class="info-box">
+            <strong>📱 Android ফোন থেকেও করা যাবে!</strong>
+            <p>সব কাজ Chrome ব্রাউজার দিয়ে করা যাবে। কোনো কম্পিউটার লাগবে না।</p>
+        </div>
+
+        <!-- পদ্ধতি ১: GitHub থেকে -->
+        <h2 style="color: #1B5E20; margin: 20px 0 15px; font-size: 18px;">📌 পদ্ধতি ১: GitHub + Vercel (সবচেয়ে সহজ)</h2>
+
+        <div class="step">
+            <span class="step-number">১</span>
+            <span class="step-title">GitHub Account তৈরি করুন</span>
+            <div class="step-content">
+                <ol>
+                    <li><a href="https://github.com/signup" target="_blank">github.com/signup</a> গিয়ে Account তৈরি করুন</li>
+                    <li>ইমেইল ও পাসওয়ার্ড দিয়ে Sign up করুন</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">২</span>
+            <span class="step-title">নতুন Repository তৈরি করুন</span>
+            <div class="step-content">
+                <ol>
+                    <li>GitHub এ লগইন করে উপরে ডানপাশে <span class="highlight">+</span> ক্লিক করুন</li>
+                    <li><span class="highlight">New repository</span> সিলেক্ট করুন</li>
+                    <li>Repository name দিন: <code>apon-foundation</code></li>
+                    <li><span class="highlight">Public</span> সিলেক্ট করুন</li>
+                    <li><span class="highlight">Create repository</span> ক্লিক করুন</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">৩</span>
+            <span class="step-title">Vercel Account তৈরি করুন</span>
+            <div class="step-content">
+                <ol>
+                    <li><a href="https://vercel.com/signup" target="_blank">vercel.com/signup</a> গিয়ে Sign up করুন</li>
+                    <li><span class="highlight">Continue with GitHub</span> ক্লিক করুন</li>
+                    <li>GitHub দিয়ে Authorize করুন</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">৪</span>
+            <span class="step-title">Project Import করুন</span>
+            <div class="step-content">
+                <ol>
+                    <li>Vercel Dashboard এ <span class="highlight">Add New...</span> → <span class="highlight">Project</span> ক্লিক করুন</li>
+                    <li><span class="highlight">Import Git Repository</span> সিলেক্ট করুন</li>
+                    <li>আপনার <code>apon-foundation</code> repository খুঁজে বের করুন</li>
+                    <li><span class="highlight">Import</span> ক্লিক করুন</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">৫</span>
+            <span class="step-title">Configure করুন</span>
+            <div class="step-content">
+                <ul>
+                    <li><strong>Framework Preset:</strong> Next.js (অটো সিলেক্ট হবে)</li>
+                    <li><strong>Root Directory:</strong> ./ (ডিফল্ট রাখুন)</li>
+                    <li><strong>Build Command:</strong> next build (ডিফল্ট)</li>
+                </ul>
+                <p>তারপর <span class="highlight">Deploy</span> ক্লিক করুন।</p>
+                <p>২-৩ মিনিট অপেক্ষা করুন। হয়ে গেলে আপনার ওয়েবসাইট URL পাবেন!</p>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- পদ্ধতি ২: Direct Upload -->
+        <h2 style="color: #1B5E20; margin: 20px 0 15px; font-size: 18px;">📌 পদ্ধতি ২: Vercel CLI (কমান্ড লাইন)</h2>
+
+        <div class="warning-box">
+            <strong>⚠️ এটি কম্পিউটার দরকার</strong>
+            <p>যদি কম্পিউটার থাকে, তাহলে এই কমান্ড রান করুন:</p>
+        </div>
+
+        <div class="code-block">
+# ১. Vercel CLI ইনস্টল করুন
+npm install -g vercel
+
+# ২. প্রজেক্ট ফোল্ডারে যান
+cd /home/z/my-project
+
+# ৩. Vercel এ লগইন করুন
+vercel login
+
+# ৪. ডিপ্লয় করুন
+vercel --prod
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Google Sheets Setup -->
+        <h2 style="color: #1B5E20; margin: 20px 0 15px; font-size: 18px;">☁️ Google Sheets সিঙ্ক সেটআপ</h2>
+
+        <div class="info-box">
+            <strong>কেন দরকার?</strong>
+            <p>Vercel ফ্রিতে স্থায়ী ডাটা রাখে না। Google Sheets ব্যবহার করলে সব ডাটা স্থায়ীভাবে থাকবে।</p>
+        </div>
+
+        <div class="step">
+            <span class="step-number">১</span>
+            <span class="step-title">Google Sheets তৈরি করুন</span>
+            <div class="step-content">
+                <ol>
+                    <li><a href="https://sheets.google.com" target="_blank">sheets.google.com</a> গিয়ে সাইন ইন করুন</li>
+                    <li><span class="highlight">+ Blank</span> ক্লিক করুন</li>
+                    <li>নাম দিন: <strong>"আপন ফাউন্ডেশন ডাটা"</strong></li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">২</span>
+            <span class="step-title">Apps Script খুলুন ও কোড পেস্ট করুন</span>
+            <div class="step-content">
+                <ol>
+                    <li>Extensions → <span class="highlight">Apps Script</span> ক্লিক করুন</li>
+                    <li>নিচের কোড কপি করে পেস্ট করুন:</li>
+                </ol>
+                <div class="code-block" style="font-size: 11px;">
+const SHEET_NAME = 'Data';
+
+function doGet(e) {
+  const action = e.parameter.action || 'load';
+  if (action === 'load') {
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+    if (!sheet) {
+      SpreadsheetApp.getActiveSpreadsheet().insertSheet(SHEET_NAME);
+      return ContentService.createTextOutput(JSON.stringify({success: true, data: {}}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    const data = sheet.getDataRange().getValues();
+    const result = {};
+    for (let i = 1; i < data.length; i++) {
+      if (data[i][0] && data[i][1]) {
+        try { result[data[i][0]] = JSON.parse(data[i][1]); }
+        catch(e) { result[data[i][0]] = data[i][1]; }
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify({success: true, data: result}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function doPost(e) {
+  try {
+    const body = JSON.parse(e.postData.contents);
+    if (body.action === 'save') {
+      let sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
+      if (!sheet) sheet = SpreadsheetApp.getActiveSpreadsheet().insertSheet(SHEET_NAME);
+      sheet.clear();
+      sheet.appendRow(['Key', 'Value', 'Updated']);
+      for (const [k, v] of Object.entries(body.data)) {
+        sheet.appendRow([k, JSON.stringify(v), new Date().toISOString()]);
+      }
+      return ContentService.createTextOutput(JSON.stringify({success: true}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({success: false, error: err.message}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">৩</span>
+            <span class="step-title">Deploy করুন ও URL পান</span>
+            <div class="step-content">
+                <ol>
+                    <li>উপরে <span class="highlight">Deploy</span> → <span class="highlight">New deployment</span> ক্লিক করুন</li>
+                    <li>গিয়ার আইকন ⚙️ ক্লিক করে <span class="highlight">Web app</span> সিলেক্ট করুন</li>
+                    <li><strong>Execute as:</strong> Me</li>
+                    <li><strong>Who has access:</strong> Anyone</li>
+                    <li><span class="highlight">Deploy</span> ক্লিক করুন</li>
+                    <li>অনুমতি দিন (Authorize)</li>
+                    <li><span class="highlight">Web app URL</span> কপি করুন</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="step">
+            <span class="step-number">৪</span>
+            <span class="step-title">ওয়েবসাইটে URL সেট করুন</span>
+            <div class="step-content">
+                <p>আপনার ওয়েবসাইটে লগইন করুন:</p>
+                <ol>
+                    <li>লগইন: <strong>aponfoundation.baligaw@gmail.com</strong></li>
+                    <li>পাসওয়ার্ড: <strong>admin123</strong></li>
+                    <li><span class="highlight">সেটিংস</span> এ যান</li>
+                    <li>Google Sheets সিঙ্ক সেকশনে URL পেস্ট করুন</li>
+                    <li><span class="highlight">সংরক্ষণ করুন</span> ক্লিক করুন</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="success-box">
+            <h3 style="margin-bottom: 10px;">✅ সব শেষ!</h3>
+            <p>এখন থেকে সব ডাটা Google Sheets-এ সিঙ্ক হবে। বারবার ডিপ্লয় করতে হবে না।</p>
+        </div>
+
+        <div class="text-center" style="margin-top: 25px;">
+            <a href="https://vercel.com/signup" target="_blank" class="btn">🚀 Vercel শুরু করুন</a>
+            <a href="https://github.com/signup" target="_blank" class="btn btn-blue">📦 GitHub তৈরি করুন</a>
+        </div>
+
+        <div class="info-box" style="margin-top: 20px;">
+            <strong>🔐 লগইন তথ্য:</strong>
+            <ul>
+                <li><strong>ইমেইল:</strong> aponfoundation.baligaw@gmail.com</li>
+                <li><strong>পাসওয়ার্ড:</strong> admin123</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Accordion functionality
+        document.querySelectorAll('.accordion-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                content.classList.toggle('active');
+            });
+        });
+    </script>
+</body>
+</html>
