@@ -1770,28 +1770,49 @@ function GallerySection() {
     }
   };
 
-  // শেয়ার লিংক কপি করা
-  const copyShareLink = (imageId: string) => {
+  // শেয়ারযোগ্য লিংক তৈরি করা (ডাটা URL-এ এনকোড করা)
+  const createShareLink = (image: typeof gallery[0]) => {
     const baseUrl = getBaseUrl();
-    const shareLink = `${baseUrl}/article/${imageId}`;
+    const shareData = {
+      id: image.id,
+      url: image.url,
+      caption: image.caption,
+      title: image.title,
+      content: image.content,
+      category: image.category,
+      date: image.date,
+      author: image.author,
+      tags: image.tags,
+    };
+    const encodedData = encodeURIComponent(btoa(JSON.stringify(shareData)));
+    return `${baseUrl}/share?d=${encodedData}`;
+  };
+
+  // শেয়ার লিংক কপি করা
+  const copyShareLink = (image: typeof gallery[0]) => {
+    const shareLink = createShareLink(image);
     navigator.clipboard.writeText(shareLink);
-    setCopiedId(imageId);
+    setCopiedId(image.id);
     setTimeout(() => setCopiedId(null), 2000);
   };
 
   // ছবি শেয়ার করা (WhatsApp)
-  const shareOnWhatsApp = (image: { id?: string; caption: string; title?: string }) => {
-    const baseUrl = getBaseUrl();
-    const shareLink = `${baseUrl}/article/${image.id}`;
-    const text = `আপন ফাউন্ডেশন\n${image.title || image.caption}\n\nবিস্তারিত পড়তে ক্লিক করুন:\n${shareLink}`;
+  const shareOnWhatsApp = (image: typeof gallery[0]) => {
+    const shareLink = createShareLink(image);
+    const text = `আপন ফাউন্ডেশন\n${image.title || image.caption}\n\nবিস্তারিত পড়ুন:\n${shareLink}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   // Facebook এ শেয়ার
-  const shareOnFacebook = (image: { id?: string }) => {
-    const baseUrl = getBaseUrl();
-    const shareLink = `${baseUrl}/article/${image.id}`;
+  const shareOnFacebook = (image: typeof gallery[0]) => {
+    const shareLink = createShareLink(image);
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareLink)}`, '_blank');
+  };
+
+  // নতুন উইন্ডোতে আর্টিকেল খোলা
+  const openArticle = (image: typeof gallery[0]) => {
+    const shareLink = createShareLink(image);
+    window.open(shareLink, '_blank');
   };
 
   return (
@@ -1822,17 +1843,43 @@ function GallerySection() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end">
                 <div className="p-3 w-full">
-                  <p className="text-white text-sm truncate mb-2">{image.caption}</p>
+                  <p className="text-white text-sm truncate mb-2">{image.title || image.caption}</p>
                   <div className="flex flex-wrap gap-1">
+                    {/* আর্টিকেল দেখুন বাটন */}
+                    {(image.content || image.title) && (
+                      <Button 
+                        size="sm" 
+                        className="bg-[#D4AF37] text-[#1B5E20] hover:bg-[#e5c158] px-2" 
+                        onClick={() => openArticle(image)} 
+                        title="আর্টিকেল দেখুন"
+                      >
+                        <Eye size={12} />
+                      </Button>
+                    )}
                     {canShare && (
                       <>
-                        <Button size="sm" className="bg-green-600 text-white hover:bg-green-700 px-2" onClick={() => copyShareLink(image.id)} title="লিংক কপি করুন">
-                          {copiedId === image.id ? '✓ কপি' : <Share2 size={12} />}
+                        <Button 
+                          size="sm" 
+                          className="bg-green-600 text-white hover:bg-green-700 px-2" 
+                          onClick={() => copyShareLink(image)} 
+                          title="লিংক কপি করুন"
+                        >
+                          {copiedId === image.id ? '✓' : <Share2 size={12} />}
                         </Button>
-                        <Button size="sm" className="bg-green-700 text-white hover:bg-green-800 px-2" onClick={() => shareOnWhatsApp(image)} title="WhatsApp">
+                        <Button 
+                          size="sm" 
+                          className="bg-green-700 text-white hover:bg-green-800 px-2" 
+                          onClick={() => shareOnWhatsApp(image)} 
+                          title="WhatsApp"
+                        >
                           <MessageCircle size={12} />
                         </Button>
-                        <Button size="sm" className="bg-blue-600 text-white hover:bg-blue-700 px-2" onClick={() => shareOnFacebook(image)} title="Facebook">
+                        <Button 
+                          size="sm" 
+                          className="bg-blue-600 text-white hover:bg-blue-700 px-2" 
+                          onClick={() => shareOnFacebook(image)} 
+                          title="Facebook"
+                        >
                           <Facebook size={12} />
                         </Button>
                       </>
