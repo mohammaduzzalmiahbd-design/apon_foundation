@@ -95,3 +95,5 @@ Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allow
  GET /sw.js 404 in 132ms (compile: 51ms, render: 81ms)
 ✓ Compiled in 203ms
 ✓ Compiled in 199ms
+✓ Compiled in 303ms
+✓ Compiled in 3ms

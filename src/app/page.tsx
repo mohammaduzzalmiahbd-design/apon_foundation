@@ -215,7 +215,7 @@ interface HeaderProps {
 }
 
 function Header({ isMobileMenuOpen, setIsMobileMenuOpen, menuItems, activeSection, setActiveSection, showLogin, setShowLogin }: HeaderProps) {
-  const { foundationInfo, syncStatus } = useStore();
+  const { foundationInfo } = useStore();
   const { isAuthenticated, currentUser, logout } = useAuthStore();
 
   return (
@@ -245,23 +245,6 @@ function Header({ isMobileMenuOpen, setIsMobileMenuOpen, menuItems, activeSectio
           
           {/* Auth Buttons */}
           <div className="flex items-center gap-2">
-            {/* সিঙ্ক স্ট্যাটাস ইন্ডিকেটর */}
-            {syncStatus === 'saving' && (
-              <div className="hidden md:flex items-center gap-1 text-yellow-200 text-sm">
-                <RefreshCw size={14} className="animate-spin" /> সেভ হচ্ছে...
-              </div>
-            )}
-            {syncStatus === 'saved' && (
-              <div className="hidden md:flex items-center gap-1 text-green-300 text-sm">
-                <Check size={14} /> সেভ হয়েছে!
-              </div>
-            )}
-            {syncStatus === 'error' && (
-              <div className="hidden md:flex items-center gap-1 text-red-300 text-sm">
-                <AlertTriangle size={14} /> সেভ ব্যর্থ
-              </div>
-            )}
-            
             {isAuthenticated && currentUser && (
               <div className="hidden md:flex items-center gap-2 mr-4">
                 <Badge className="bg-[#D4AF37] text-[#1B5E20]">
