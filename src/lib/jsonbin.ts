@@ -2,7 +2,7 @@
 // সব ডাটা অটোমেটিক সেভ ও লোড হবে
 
 const JSONBIN_API_KEY = '$2a$10$UFbnELNoFdI2JXN2VXNIp.MBKM4X4LhB42T5upCfsxXHy/a3z7l8q';
-const JSONBIN_BIN_ID = '683e5e188a456b7f66d5e7c0'; // আপনার ডাটার ID
+const JSONBIN_BIN_ID = '69a5cd8cd0ea881f40e81368'; // আপনার ডাটার ID
 const JSONBIN_URL = 'https://api.jsonbin.io/v3';
 
 // ডাটা সেভ করা
