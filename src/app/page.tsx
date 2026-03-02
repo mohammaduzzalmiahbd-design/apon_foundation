@@ -1671,6 +1671,7 @@ function GallerySection() {
   const { gallery, addGalleryImage, deleteGalleryImage } = useStore();
   const { hasPermission } = useAuthStore();
   const [isAddingImage, setIsAddingImage] = useState(false);
+  const [editingArticle, setEditingArticle] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [saveStatus, setSaveStatus] = useState<string>('');
   const [newImage, setNewImage] = useState({
@@ -1678,6 +1679,12 @@ function GallerySection() {
     caption: '',
     category: '',
     date: new Date().toISOString().split('T')[0],
+    // আর্টিকেল ফিল্ড
+    title: '',
+    content: '',
+    author: '',
+    tags: '',
+    isPublished: false,
   });
 
   const canUpload = hasPermission('gallery_upload' as Permission);
@@ -1702,24 +1709,38 @@ function GallerySection() {
     
     const id = `img-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`;
     const imageData = {
-      ...newImage,
       id,
+      url: newImage.url,
+      caption: newImage.caption,
+      category: newImage.category,
+      date: newImage.date,
       createdAt: new Date().toISOString(),
+      // আর্টিকেল ডাটা
+      title: newImage.title || newImage.caption,
+      content: newImage.content,
+      author: newImage.author,
+      tags: newImage.tags ? newImage.tags.split(',').map(t => t.trim()) : [],
+      isPublished: newImage.isPublished,
     };
     
     try {
-      // সার্ভারে সেভ এবং লোকাল স্টোরেজে সেভ
       const success = await addGalleryImage(imageData);
       
       if (success) {
         setSaveStatus('সেভ হয়েছে!');
-        setNewImage({ url: '', caption: '', category: '', date: new Date().toISOString().split('T')[0] });
+        setNewImage({ 
+          url: '', caption: '', category: '', date: new Date().toISOString().split('T')[0],
+          title: '', content: '', author: '', tags: '', isPublished: false 
+        });
         setIsAddingImage(false);
         setTimeout(() => setSaveStatus(''), 2000);
       } else {
         setSaveStatus('সার্ভারে সেভ ব্যর্থ, কিন্তু লোকালি সেভ হয়েছে!');
         setTimeout(() => {
-          setNewImage({ url: '', caption: '', category: '', date: new Date().toISOString().split('T')[0] });
+          setNewImage({ 
+            url: '', caption: '', category: '', date: new Date().toISOString().split('T')[0],
+            title: '', content: '', author: '', tags: '', isPublished: false 
+          });
           setIsAddingImage(false);
           setSaveStatus('');
         }, 2000);
@@ -1752,24 +1773,24 @@ function GallerySection() {
   // শেয়ার লিংক কপি করা
   const copyShareLink = (imageId: string) => {
     const baseUrl = getBaseUrl();
-    const shareLink = `${baseUrl}/share/${imageId}`;
+    const shareLink = `${baseUrl}/article/${imageId}`;
     navigator.clipboard.writeText(shareLink);
     setCopiedId(imageId);
     setTimeout(() => setCopiedId(null), 2000);
   };
 
   // ছবি শেয়ার করা (WhatsApp)
-  const shareOnWhatsApp = (image: { id?: string; caption: string }) => {
+  const shareOnWhatsApp = (image: { id?: string; caption: string; title?: string }) => {
     const baseUrl = getBaseUrl();
-    const shareLink = `${baseUrl}/share/${image.id}`;
-    const text = `আপন ফাউন্ডেশন\n${image.caption}\n\nছবি দেখতে ক্লিক করুন:\n${shareLink}`;
+    const shareLink = `${baseUrl}/article/${image.id}`;
+    const text = `আপন ফাউন্ডেশন\n${image.title || image.caption}\n\nবিস্তারিত পড়তে ক্লিক করুন:\n${shareLink}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   // Facebook এ শেয়ার
   const shareOnFacebook = (image: { id?: string }) => {
     const baseUrl = getBaseUrl();
-    const shareLink = `${baseUrl}/share/${image.id}`;
+    const shareLink = `${baseUrl}/article/${image.id}`;
     window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareLink)}`, '_blank');
   };
 
@@ -1831,9 +1852,9 @@ function GallerySection() {
 
       {/* Add Image Dialog */}
       <Dialog open={isAddingImage} onOpenChange={setIsAddingImage}>
-        <DialogContent>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>ছবি যুক্ত করুন</DialogTitle>
+            <DialogTitle className="text-xl">📸 ছবি ও আর্টিকেল যুক্ত করুন</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
             {/* স্ট্যাটাস মেসেজ */}
@@ -1843,6 +1864,7 @@ function GallerySection() {
               </div>
             )}
             
+            {/* ছবি আপলোড */}
             <div>
               <Label>ছবি আপলোড করুন *</Label>
               <Input type="file" accept="image/*" onChange={handleFileUpload} />
@@ -1851,22 +1873,88 @@ function GallerySection() {
             {newImage.url && (
               <img src={newImage.url} alt="Preview" className="w-full h-40 object-cover rounded-lg" />
             )}
-            <div>
-              <Label>ক্যাপশন *</Label>
-              <Input 
-                value={newImage.caption} 
-                onChange={(e) => setNewImage({ ...newImage, caption: e.target.value })}
-                placeholder="ছবির বিবরণ লিখুন"
-              />
+
+            {/* ক্যাপশন ও ক্যাটেগরি */}
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>ক্যাপশন *</Label>
+                <Input 
+                  value={newImage.caption} 
+                  onChange={(e) => setNewImage({ ...newImage, caption: e.target.value })}
+                  placeholder="ছবির সংক্ষিপ্ত বিবরণ"
+                />
+              </div>
+              <div>
+                <Label>ক্যাটেগরি</Label>
+                <Select value={newImage.category} onValueChange={(v) => setNewImage({ ...newImage, category: v })}>
+                  <SelectTrigger><SelectValue placeholder="সিলেক্ট করুন" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="অনুষ্ঠান">অনুষ্ঠান</SelectItem>
+                    <SelectItem value="কার্যক্রম">কার্যক্রম</SelectItem>
+                    <SelectItem value="সেবামূলক">সেবামূলক</SelectItem>
+                    <SelectItem value="শিক্ষা">শিক্ষা</SelectItem>
+                    <SelectItem value="স্বাস্থ্য">স্বাস্থ্য</SelectItem>
+                    <SelectItem value="খেলাধুলা">খেলাধুলা</SelectItem>
+                    <SelectItem value="অন্যান্য">অন্যান্য</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            <div>
-              <Label>ক্যাটেগরি</Label>
-              <Input 
-                value={newImage.category} 
-                onChange={(e) => setNewImage({ ...newImage, category: e.target.value })}
-                placeholder="যেমন: অনুষ্ঠান, কার্যক্রম"
-              />
+
+            <Separator />
+
+            {/* আর্টিকেল সেকশন */}
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4">
+              <h3 className="font-bold text-[#1B5E20] mb-3 flex items-center gap-2">
+                📰 আর্টিকেল (ঐচ্ছিক)
+              </h3>
+              
+              <div className="space-y-3">
+                <div>
+                  <Label>আর্টিকেল শিরোনাম</Label>
+                  <Input 
+                    value={newImage.title} 
+                    onChange={(e) => setNewImage({ ...newImage, title: e.target.value })}
+                    placeholder="পত্রিকার মতো শিরোনাম লিখুন"
+                  />
+                </div>
+                <div>
+                  <Label>বিস্তারিত লেখা</Label>
+                  <Textarea 
+                    value={newImage.content} 
+                    onChange={(e) => setNewImage({ ...newImage, content: e.target.value })}
+                    placeholder="এই ছবির বিস্তারিত বিবরণ লিখুন... পত্রিকার মতো আর্টিকেল হবে"
+                    rows={5}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label>লেখক</Label>
+                    <Input 
+                      value={newImage.author} 
+                      onChange={(e) => setNewImage({ ...newImage, author: e.target.value })}
+                      placeholder="লেখকের নাম"
+                    />
+                  </div>
+                  <div>
+                    <Label>ট্যাগ (কমা দিয়ে)</Label>
+                    <Input 
+                      value={newImage.tags} 
+                      onChange={(e) => setNewImage({ ...newImage, tags: e.target.value })}
+                      placeholder="সেবা, শিক্ষা, স্বাস্থ্য"
+                    />
+                  </div>
+                </div>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <Checkbox
+                    checked={newImage.isPublished}
+                    onCheckedChange={(checked) => setNewImage({ ...newImage, isPublished: checked as boolean })}
+                  />
+                  <span className="text-sm">প্রকাশিত (সবাই দেখতে পাবে)</span>
+                </label>
+              </div>
             </div>
+
             <div className="flex gap-2">
               <Button variant="outline" className="flex-1" onClick={() => { setIsAddingImage(false); setSaveStatus(''); }}>বাতিল</Button>
               <Button 

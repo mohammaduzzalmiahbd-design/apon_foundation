@@ -118,7 +118,7 @@ export interface Transaction {
   createdAt: string;
 }
 
-// গ্যালারি টাইপ
+// গ্যালারি টাইপ (পত্রিকা স্টাইল আর্টিকেল সহ)
 export interface GalleryImage {
   id: string;
   url: string;
@@ -126,6 +126,12 @@ export interface GalleryImage {
   category: string;
   date: string;
   createdAt: string;
+  // আর্টিকেল ফিল্ড
+  title?: string; // আর্টিকেল শিরোনাম
+  content?: string; // আর্টিকেল বিস্তারিত
+  author?: string; // লেখক
+  tags?: string[]; // ট্যাগ
+  isPublished?: boolean; // প্রকাশিত কিনা
 }
 
 // সোশ্যাল মিডিয়া টাইপ
