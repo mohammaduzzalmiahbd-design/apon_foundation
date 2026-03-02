@@ -1,21 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { saveToGitHub, loadFromGitHub } from '@/lib/github-db';
+import { saveToJsonBin, loadFromJsonBin } from '@/lib/jsonbin';
 
-// GET - ডাটা পাওয়া (GitHub থেকে)
+// GET - ক্লাউড থেকে ডাটা লোড
 export async function GET() {
   try {
-    const data = await loadFromGitHub();
+    const data = await loadFromJsonBin();
     
     if (data) {
       return NextResponse.json({
         data,
         success: true,
-        source: 'github',
-        message: 'GitHub থেকে লোড হয়েছে'
+        source: 'jsonbin',
+        message: 'ক্লাউড থেকে লোড হয়েছে'
       });
     }
 
-    // যদি GitHub-এ ডাটা না থাকে, default ডাটা দেখাও
     return NextResponse.json({
       data: null,
       success: false,
@@ -23,34 +22,28 @@ export async function GET() {
     });
   } catch (error) {
     console.error('GET error:', error);
-    return NextResponse.json({ error: 'Failed to load data', success: false }, { status: 500 });
+    return NextResponse.json({ error: 'ডাটা লোড করতে সমস্যা', success: false }, { status: 500 });
   }
 }
 
-// POST - ডাটা সেভ করা (GitHub-এ)
+// POST - ক্লাউডে ডাটা সেভ
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // সব ডাটা সেভ করা
     if (body.fullData) {
-      const dataToSave = {
-        ...body.fullData,
-        lastSync: new Date().toISOString(),
-      };
-
-      const result = await saveToGitHub(dataToSave);
+      const result = await saveToJsonBin(body.fullData);
 
       return NextResponse.json({
         success: result.success,
         message: result.message,
-        source: 'github'
+        source: 'jsonbin'
       });
     }
 
     return NextResponse.json({ error: 'Invalid request', success: false }, { status: 400 });
   } catch (error) {
     console.error('POST error:', error);
-    return NextResponse.json({ error: 'Failed to save data', success: false }, { status: 500 });
+    return NextResponse.json({ error: 'ডাটা সেভ করতে সমস্যা', success: false }, { status: 500 });
   }
 }

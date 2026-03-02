@@ -58,3 +58,11 @@ Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allow
 ✅ Data saved to GitHub
  POST /api/data 200 in 1787ms (compile: 58ms, render: 1729ms)
   Reload env: .env.local
+ GET /sw.js 404 in 129ms (compile: 52ms, render: 77ms)
+ GET /sw.js 404 in 40ms (compile: 6ms, render: 35ms)
+✅ Data saved to GitHub
+ POST /api/data 200 in 2.4s (compile: 37ms, render: 2.4s)
+ GET /sw.js 404 in 42ms (compile: 10ms, render: 33ms)
+✓ Compiled in 172ms
+✅ নতুন bin তৈরি হয়েছে!
+ POST /api/data 200 in 282ms (compile: 46ms, render: 236ms)

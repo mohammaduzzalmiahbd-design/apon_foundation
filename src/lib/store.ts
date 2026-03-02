@@ -53,7 +53,7 @@ const defaultSocialLinks: SocialLink[] = [
   },
 ];
 
-// GitHub-এ ডাটা সেভ করার ফাংশন (পারমানেন্ট স্টোরেজ)
+// ক্লাউডে ডাটা সেভ করার ফাংশন (JSONBin.io)
 async function saveToServer(state: any) {
   try {
     const response = await fetch('/api/data', {
@@ -63,10 +63,10 @@ async function saveToServer(state: any) {
     });
     const result = await response.json();
     
-    if (!result.success) {
-      console.error('GitHub save failed:', result);
+    if (result.success) {
+      console.log('✅ ক্লাউডে সেভ হয়েছে!');
     } else {
-      console.log('✅ Data saved to GitHub successfully!');
+      console.error('সেভ ব্যর্থ:', result);
     }
     return result.success;
   } catch (error) {
