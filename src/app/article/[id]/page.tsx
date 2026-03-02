@@ -12,19 +12,50 @@ export default function ArticlePage() {
   const params = useParams();
   const { gallery, foundationInfo, isInitialized } = useStore();
   const [copied, setCopied] = useState(false);
+  const [remoteArticle, setRemoteArticle] = useState<GalleryImage | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
-  // Find article using useMemo instead of useEffect with setState
-  const article = useMemo(() => {
-    if (params.id && gallery.length > 0) {
-      return gallery.find((g: GalleryImage) => g.id === params.id) || null;
+  // First try local gallery, then fetch from API
+  useEffect(() => {
+    const fetchArticle = async () => {
+      if (!params.id) return;
+
+      // First check local gallery
+      const localArticle = gallery.find((g: GalleryImage) => g.id === params.id);
+      if (localArticle) {
+        setRemoteArticle(localArticle);
+        setIsLoading(false);
+        return;
+      }
+
+      // If not in local, fetch from API (Supabase)
+      try {
+        const response = await fetch(`/api/article/${params.id}`);
+        const result = await response.json();
+
+        if (result.success && result.article) {
+          setRemoteArticle(result.article);
+        } else {
+          setNotFound(true);
+        }
+      } catch (error) {
+        console.error('Failed to fetch article:', error);
+        setNotFound(true);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (isInitialized || !isInitialized) {
+      fetchArticle();
     }
-    return null;
-  }, [params.id, gallery]);
+  }, [params.id, gallery, isInitialized]);
 
   // শেয়ার ফাংশন
   const shareOnFacebook = () => {
     const url = window.location.href;
-    const text = article?.title || article?.caption || '';
+    const text = remoteArticle?.title || remoteArticle?.caption || '';
     window.open(
       `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`,
       '_blank'
@@ -33,7 +64,7 @@ export default function ArticlePage() {
 
   const shareOnWhatsApp = () => {
     const url = window.location.href;
-    const text = `${article?.title || article?.caption}\n\n${url}`;
+    const text = `${remoteArticle?.title || remoteArticle?.caption}\n\n${url}`;
     window.open(
       `https://wa.me/?text=${encodeURIComponent(text)}`,
       '_blank'
@@ -46,7 +77,8 @@ export default function ArticlePage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  if (!isInitialized) {
+  // Loading state
+  if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center">
         <div className="text-center">
@@ -57,14 +89,15 @@ export default function ArticlePage() {
     );
   }
 
-  if (!article) {
+  // Not found state
+  if (notFound || !remoteArticle) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center">
         <div className="text-center bg-white rounded-2xl shadow-xl p-8 max-w-md">
           <div className="text-6xl mb-4">📄</div>
           <h1 className="text-2xl font-bold text-gray-800 mb-2">আর্টিকেল পাওয়া যায়নি</h1>
           <p className="text-gray-500 mb-6">এই আর্টিকেলটি আর নেই বা সরানো হয়েছে।</p>
-          <Link 
+          <Link
             href="/"
             className="inline-flex items-center gap-2 bg-[#1B5E20] text-white px-6 py-3 rounded-lg hover:bg-[#2e7d32] transition-colors"
           >
@@ -75,6 +108,8 @@ export default function ArticlePage() {
     );
   }
 
+  const article = remoteArticle;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       {/* Header */}
@@ -83,9 +118,9 @@ export default function ArticlePage() {
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-3">
               <div className="w-12 h-12 bg-white rounded-full p-1">
-                <img 
-                  src={foundationInfo.logo} 
-                  alt="লোগো" 
+                <img
+                  src={foundationInfo.logo}
+                  alt="লোগো"
                   className="w-full h-full object-contain"
                   onError={(e) => { e.currentTarget.src = '/logo.svg'; }}
                 />
@@ -98,7 +133,7 @@ export default function ArticlePage() {
                 <p className="text-xs text-[#FFD700]/80">মানব সেবায় আমরা</p>
               </div>
             </Link>
-            <Link 
+            <Link
               href="/"
               className="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-lg hover:bg-white/30 transition-colors"
             >
@@ -113,13 +148,13 @@ export default function ArticlePage() {
         <article className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Hero Image */}
           <div className="relative">
-            <img 
-              src={article.url} 
+            <img
+              src={article.url}
               alt={article.title || article.caption}
               className="w-full h-[300px] md:h-[500px] object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
-            
+
             {/* Category Badge */}
             <div className="absolute top-4 left-4">
               <span className="bg-[#D4AF37] text-[#1B5E20] px-4 py-1 rounded-full text-sm font-semibold">
@@ -158,7 +193,7 @@ export default function ArticlePage() {
             {article.tags && article.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-6">
                 {article.tags.map((tag, index) => (
-                  <span 
+                  <span
                     key={index}
                     className="flex items-center gap-1 bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm"
                   >
@@ -190,19 +225,19 @@ export default function ArticlePage() {
                 📤 এই আর্টিকেল শেয়ার করুন
               </h3>
               <div className="flex flex-wrap justify-center gap-3">
-                <button 
+                <button
                   onClick={shareOnFacebook}
                   className="flex items-center gap-2 bg-[#1877f2] text-white px-6 py-3 rounded-lg hover:bg-[#166fe5] transition-colors"
                 >
                   <Facebook size={20} /> ফেসবুকে শেয়ার
                 </button>
-                <button 
+                <button
                   onClick={shareOnWhatsApp}
                   className="flex items-center gap-2 bg-[#25d366] text-white px-6 py-3 rounded-lg hover:bg-[#22c55e] transition-colors"
                 >
                   <MessageCircle size={20} /> হোয়াটসঅ্যাপ
                 </button>
-                <button 
+                <button
                   onClick={copyLink}
                   className={`flex items-center gap-2 px-6 py-3 rounded-lg transition-colors ${
                     copied ? 'bg-green-500 text-white' : 'bg-gray-600 text-white hover:bg-gray-700'
@@ -216,7 +251,7 @@ export default function ArticlePage() {
             {/* Footer Info */}
             <div className="mt-8 pt-6 border-t text-center text-sm text-gray-500">
               <p>
-                © {toBanglaNumber(new Date().getFullYear())} আপন ফাউন্ডেশন | 
+                © {toBanglaNumber(new Date().getFullYear())} আপন ফাউন্ডেশন |
                 বালিগাঁও, অষ্টগ্রাম, কিশোরগঞ্জ
               </p>
               <p className="mt-1">
@@ -225,37 +260,6 @@ export default function ArticlePage() {
             </div>
           </div>
         </article>
-
-        {/* Related Articles */}
-        {gallery.filter(g => g.id !== article.id && g.isPublished).length > 0 && (
-          <div className="max-w-4xl mx-auto mt-12">
-            <h2 className="text-2xl font-bold text-[#1B5E20] mb-6">📰 আরো আর্টিকেল</h2>
-            <div className="grid md:grid-cols-3 gap-6">
-              {gallery
-                .filter(g => g.id !== article.id && g.isPublished)
-                .slice(0, 3)
-                .map((item) => (
-                  <Link 
-                    key={item.id}
-                    href={`/article/${item.id}`}
-                    className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
-                  >
-                    <img 
-                      src={item.url} 
-                      alt={item.title || item.caption}
-                      className="w-full h-40 object-cover"
-                    />
-                    <div className="p-4">
-                      <span className="text-xs text-[#D4AF37] font-semibold">{item.category}</span>
-                      <h3 className="font-semibold text-gray-800 mt-1 line-clamp-2">
-                        {item.title || item.caption}
-                      </h3>
-                    </div>
-                  </Link>
-                ))}
-            </div>
-          </div>
-        )}
       </main>
     </div>
   );

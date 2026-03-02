@@ -448,7 +448,7 @@ export const useStore = create<StoreState>()(
         set((state) => ({
           gallery: [...state.gallery, image],
         }));
-        
+
         // তারপর সার্ভারে সেভ
         try {
           const response = await fetch('/api/images', {
@@ -457,6 +457,32 @@ export const useStore = create<StoreState>()(
             body: JSON.stringify(image),
           });
           const result = await response.json();
+
+          // যদি আর্টিকেল পাবলিশ করা হয়, তাহলে Supabase-এও সেভ
+          if (image.isPublished && (image.title || image.content)) {
+            try {
+              await fetch('/api/articles', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  id: image.id,
+                  url: image.url,
+                  caption: image.caption,
+                  category: image.category,
+                  date: image.date,
+                  title: image.title,
+                  content: image.content,
+                  author: image.author,
+                  tags: image.tags,
+                  is_published: true,
+                }),
+              });
+              console.log('✅ Article saved to Supabase');
+            } catch (supabaseError) {
+              console.error('Supabase save error:', supabaseError);
+            }
+          }
+
           return result.success;
         } catch (error) {
           console.error('Image save error:', error);
