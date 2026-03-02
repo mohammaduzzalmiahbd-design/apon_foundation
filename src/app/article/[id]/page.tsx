@@ -1,41 +1,66 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { GalleryImage, FoundationInfo } from '@/lib/types';
-import { useStore } from '@/lib/store';
 import { formatBanglaDate, toBanglaNumber } from '@/lib/store';
 import { Facebook, MessageCircle, Share2, Calendar, User, Tag, ArrowLeft, Home } from 'lucide-react';
 import Link from 'next/link';
 
+const defaultFoundationInfo: FoundationInfo = {
+  nameGreen: 'আপন',
+  nameRed: 'ফাউন্ডেশন',
+  slogan: 'মানব সেবায় আমরা',
+  address: 'বালিগাঁও, অষ্টগ্রাম, কিশোরগঞ্জ',
+  established: '০২/০৪/২০২৫',
+  whatsapp: '8801608-427115',
+  email: 'aponfoundation.baligaw@gmail.com',
+  website: 'www.aponfoundation.org',
+  facebook: 'https://www.facebook.com/aponfoundation.bd',
+  logo: '/upload/Photoroom-20260105_213952.png',
+};
+
 export default function ArticlePage() {
   const params = useParams();
-  const { gallery, foundationInfo, isInitialized } = useStore();
+  const [article, setArticle] = useState<GalleryImage | null>(null);
+  const [foundationInfo, setFoundationInfo] = useState<FoundationInfo>(defaultFoundationInfo);
+  const [relatedArticles, setRelatedArticles] = useState<GalleryImage[]>([]);
   const [copied, setCopied] = useState(false);
-  const [remoteArticle, setRemoteArticle] = useState<GalleryImage | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
-  // First try local gallery, then fetch from API
+  // সার্ভার থেকে আর্টিকেল লোড করা
   useEffect(() => {
     const fetchArticle = async () => {
       if (!params.id) return;
 
-      // First check local gallery
-      const localArticle = gallery.find((g: GalleryImage) => g.id === params.id);
-      if (localArticle) {
-        setRemoteArticle(localArticle);
-        setIsLoading(false);
-        return;
-      }
-
-      // If not in local, fetch from API (Supabase)
       try {
-        const response = await fetch(`/api/article/${params.id}`);
+        // সার্ভার থেকে সব ডাটা লোড করা
+        const response = await fetch('/api/data');
         const result = await response.json();
 
-        if (result.success && result.article) {
-          setRemoteArticle(result.article);
+        if (result.data) {
+          const data = result.data;
+
+          // ফাউন্ডেশন ইনফো সেট করা
+          if (data.foundationInfo) {
+            setFoundationInfo(data.foundationInfo);
+          }
+
+          // গ্যালারি থেকে আর্টিকেল খুঁজা
+          const gallery: GalleryImage[] = data.gallery || [];
+          const foundArticle = gallery.find((g: GalleryImage) => g.id === params.id);
+
+          if (foundArticle) {
+            setArticle(foundArticle);
+            // রিলেটেড আর্টিকেল
+            const related = gallery
+              .filter((g: GalleryImage) => g.id !== params.id && g.isPublished)
+              .slice(0, 3);
+            setRelatedArticles(related);
+          } else {
+            setNotFound(true);
+          }
         } else {
           setNotFound(true);
         }
@@ -47,15 +72,13 @@ export default function ArticlePage() {
       }
     };
 
-    if (isInitialized || !isInitialized) {
-      fetchArticle();
-    }
-  }, [params.id, gallery, isInitialized]);
+    fetchArticle();
+  }, [params.id]);
 
   // শেয়ার ফাংশন
   const shareOnFacebook = () => {
     const url = window.location.href;
-    const text = remoteArticle?.title || remoteArticle?.caption || '';
+    const text = article?.title || article?.caption || '';
     window.open(
       `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}&quote=${encodeURIComponent(text)}`,
       '_blank'
@@ -64,7 +87,7 @@ export default function ArticlePage() {
 
   const shareOnWhatsApp = () => {
     const url = window.location.href;
-    const text = `${remoteArticle?.title || remoteArticle?.caption}\n\n${url}`;
+    const text = `${article?.title || article?.caption}\n\n${url}`;
     window.open(
       `https://wa.me/?text=${encodeURIComponent(text)}`,
       '_blank'
@@ -90,7 +113,7 @@ export default function ArticlePage() {
   }
 
   // Not found state
-  if (notFound || !remoteArticle) {
+  if (notFound || !article) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center">
         <div className="text-center bg-white rounded-2xl shadow-xl p-8 max-w-md">
@@ -107,8 +130,6 @@ export default function ArticlePage() {
       </div>
     );
   }
-
-  const article = remoteArticle;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
@@ -260,6 +281,34 @@ export default function ArticlePage() {
             </div>
           </div>
         </article>
+
+        {/* Related Articles */}
+        {relatedArticles.length > 0 && (
+          <div className="max-w-4xl mx-auto mt-12">
+            <h2 className="text-2xl font-bold text-[#1B5E20] mb-6">📰 আরো আর্টিকেল</h2>
+            <div className="grid md:grid-cols-3 gap-6">
+              {relatedArticles.map((item) => (
+                <Link
+                  key={item.id}
+                  href={`/article/${item.id}`}
+                  className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                >
+                  <img
+                    src={item.url}
+                    alt={item.title || item.caption}
+                    className="w-full h-40 object-cover"
+                  />
+                  <div className="p-4">
+                    <span className="text-xs text-[#D4AF37] font-semibold">{item.category}</span>
+                    <h3 className="font-semibold text-gray-800 mt-1 line-clamp-2">
+                      {item.title || item.caption}
+                    </h3>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

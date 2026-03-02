@@ -53,44 +53,24 @@ const defaultSocialLinks: SocialLink[] = [
   },
 ];
 
-// সার্ভারে ডাটা সেভ করার ফাংশন
+// GitHub-এ ডাটা সেভ করার ফাংশন (পারমানেন্ট স্টোরেজ)
 async function saveToServer(state: any) {
   try {
-    // প্রথমে লোকাল API তে সেভ
     const response = await fetch('/api/data', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ fullData: state }),
+      body: JSON.stringify({ fullData: { ...state, lastSync: new Date().toISOString() } }),
     });
     const result = await response.json();
     
-    // তারপর Google সিঙ্ক (যদি কনফিগার করা থাকে)
-    const googleUrl = typeof window !== 'undefined' ? localStorage.getItem('googleScriptUrl') : null;
-    if (googleUrl) {
-      try {
-        await fetch(googleUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            action: 'save',
-            data: {
-              ...state,
-              lastSync: new Date().toISOString(),
-            },
-          }),
-        });
-        console.log('✅ Google Sheets sync successful');
-      } catch (googleError) {
-        console.error('Google sync error:', googleError);
-      }
-    }
-    
     if (!result.success) {
-      console.error('Server save failed:', result);
+      console.error('GitHub save failed:', result);
+    } else {
+      console.log('✅ Data saved to GitHub successfully!');
     }
     return result.success;
   } catch (error) {
-    console.error('Server save error:', error);
+    console.error('Save error:', error);
     return false;
   }
 }
@@ -444,50 +424,11 @@ export const useStore = create<StoreState>()(
       // গ্যালারি
       gallery: [],
       addGalleryImage: async (image) => {
-        // প্রথমে লোকাল স্টোরেজে সেভ
+        // লোকাল স্টোরেজে সেভ
         set((state) => ({
           gallery: [...state.gallery, image],
         }));
-
-        // তারপর সার্ভারে সেভ
-        try {
-          const response = await fetch('/api/images', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(image),
-          });
-          const result = await response.json();
-
-          // যদি আর্টিকেল পাবলিশ করা হয়, তাহলে Supabase-এও সেভ
-          if (image.isPublished && (image.title || image.content)) {
-            try {
-              await fetch('/api/articles', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                  id: image.id,
-                  url: image.url,
-                  caption: image.caption,
-                  category: image.category,
-                  date: image.date,
-                  title: image.title,
-                  content: image.content,
-                  author: image.author,
-                  tags: image.tags,
-                  is_published: true,
-                }),
-              });
-              console.log('✅ Article saved to Supabase');
-            } catch (supabaseError) {
-              console.error('Supabase save error:', supabaseError);
-            }
-          }
-
-          return result.success;
-        } catch (error) {
-          console.error('Image save error:', error);
-          return false;
-        }
+        return true;
       },
       deleteGalleryImage: (id) =>
         set((state) => ({

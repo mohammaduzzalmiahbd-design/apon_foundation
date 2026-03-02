@@ -43,3 +43,18 @@ Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allow
  GET /sw.js 404 in 31ms (compile: 4ms, render: 26ms)
  GET /sw.js 404 in 132ms (compile: 52ms, render: 80ms)
 ✓ Compiled in 201ms
+ GET /sw.js 404 in 142ms (compile: 53ms, render: 89ms)
+ POST /api/data 200 in 37ms (compile: 27ms, render: 10ms)
+ POST /api/data 200 in 10ms (compile: 3ms, render: 8ms)
+ GET /sw.js 404 in 44ms (compile: 11ms, render: 32ms)
+✓ Compiled in 184ms
+ GET /sw.js 404 in 140ms (compile: 51ms, render: 89ms)
+ POST /api/data 200 in 34ms (compile: 24ms, render: 10ms)
+ GET /sw.js 404 in 44ms (compile: 5ms, render: 39ms)
+ POST /api/data 200 in 7ms (compile: 1742µs, render: 5ms)
+ GET /sw.js 404 in 31ms (compile: 6ms, render: 24ms)
+✓ Compiled in 180ms
+ GET /sw.js 404 in 37ms (compile: 6ms, render: 31ms)
+✅ Data saved to GitHub
+ POST /api/data 200 in 1787ms (compile: 58ms, render: 1729ms)
+  Reload env: .env.local
