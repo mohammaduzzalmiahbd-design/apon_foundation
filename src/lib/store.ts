@@ -147,6 +147,10 @@ interface StoreState {
   // সার্ভারে ডাটা সেভ
   saveAllToServer: () => Promise<boolean>;
   
+  // সিঙ্ক স্ট্যাটাস
+  syncStatus: 'idle' | 'saving' | 'saved' | 'error';
+  setSyncStatus: (status: 'idle' | 'saving' | 'saved' | 'error') => void;
+  
   // ইনিশিয়ালাইজড চেক
   isInitialized: boolean;
   setInitialized: (val: boolean) => void;
@@ -512,6 +516,7 @@ export const useStore = create<StoreState>()(
       
       // সার্ভারে সব ডাটা সেভ
       saveAllToServer: async () => {
+        set({ syncStatus: 'saving' });
         const state = get();
         const dataToSave = {
           members: state.members,
@@ -525,8 +530,16 @@ export const useStore = create<StoreState>()(
           socialPosts: state.socialPosts,
           foundationInfo: state.foundationInfo,
         };
-        return saveToServer(dataToSave);
+        const success = await saveToServer(dataToSave);
+        set({ syncStatus: success ? 'saved' : 'error' });
+        // ৩ সেকেন্ড পরে idle করে দিন
+        setTimeout(() => set({ syncStatus: 'idle' }), 3000);
+        return success;
       },
+      
+      // সিঙ্ক স্ট্যাটাস
+      syncStatus: 'idle',
+      setSyncStatus: (status) => set({ syncStatus: status }),
       
       // ইনিশিয়ালাইজড
       isInitialized: false,
