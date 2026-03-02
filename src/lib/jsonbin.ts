@@ -1,5 +1,6 @@
 // JSONBin.io - পারমানেন্ট ক্লাউড স্টোরেজ
 // সব ডাটা অটোমেটিক সেভ ও লোড হবে
+// Version: 2.0
 
 const JSONBIN_API_KEY = '$2a$10$UFbnELNoFdI2JXN2VXNIp.MBKM4X4LhB42T5upCfsxXHy/a3z7l8q';
 const JSONBIN_BIN_ID = '69a5cd8cd0ea881f40e81368'; // আপনার ডাটার ID

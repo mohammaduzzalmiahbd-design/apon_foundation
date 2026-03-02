@@ -67,3 +67,7 @@ Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allow
 ✅ নতুন bin তৈরি হয়েছে!
  POST /api/data 200 in 282ms (compile: 46ms, render: 236ms)
  GET /sw.js 404 in 39ms (compile: 6ms, render: 33ms)
+ GET /sw.js 404 in 34ms (compile: 4ms, render: 29ms)
+✅ ক্লাউডে সেভ হয়েছে!
+ POST /api/data 200 in 150ms (compile: 28ms, render: 122ms)
+ GET /sw.js 404 in 54ms (compile: 12ms, render: 42ms)
