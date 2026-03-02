@@ -29,35 +29,32 @@ export default function ArticlePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
-  // সার্ভার থেকে আর্টিকেল লোড করা
+  // localStorage থেকে ডাটা লোড
   useEffect(() => {
-    const fetchArticle = async () => {
-      if (!params.id) return;
-
+    const loadData = () => {
       try {
-        // সার্ভার থেকে সব ডাটা লোড করা
-        const response = await fetch('/api/data');
-        const result = await response.json();
+        const stored = localStorage.getItem('apon-foundation-storage');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          const data = parsed?.state;
+          
+          if (data) {
+            if (data.foundationInfo) {
+              setFoundationInfo(data.foundationInfo);
+            }
 
-        if (result.data) {
-          const data = result.data;
+            const gallery: GalleryImage[] = data.gallery || [];
+            const found = gallery.find((g: GalleryImage) => g.id === params.id);
 
-          // ফাউন্ডেশন ইনফো সেট করা
-          if (data.foundationInfo) {
-            setFoundationInfo(data.foundationInfo);
-          }
-
-          // গ্যালারি থেকে আর্টিকেল খুঁজা
-          const gallery: GalleryImage[] = data.gallery || [];
-          const foundArticle = gallery.find((g: GalleryImage) => g.id === params.id);
-
-          if (foundArticle) {
-            setArticle(foundArticle);
-            // রিলেটেড আর্টিকেল
-            const related = gallery
-              .filter((g: GalleryImage) => g.id !== params.id && g.isPublished)
-              .slice(0, 3);
-            setRelatedArticles(related);
+            if (found) {
+              setArticle(found);
+              const related = gallery
+                .filter((g: GalleryImage) => g.id !== params.id && g.isPublished)
+                .slice(0, 3);
+              setRelatedArticles(related);
+            } else {
+              setNotFound(true);
+            }
           } else {
             setNotFound(true);
           }
@@ -65,14 +62,14 @@ export default function ArticlePage() {
           setNotFound(true);
         }
       } catch (error) {
-        console.error('Failed to fetch article:', error);
+        console.error('Load error:', error);
         setNotFound(true);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchArticle();
+    loadData();
   }, [params.id]);
 
   // শেয়ার ফাংশন
@@ -119,7 +116,8 @@ export default function ArticlePage() {
         <div className="text-center bg-white rounded-2xl shadow-xl p-8 max-w-md">
           <div className="text-6xl mb-4">📄</div>
           <h1 className="text-2xl font-bold text-gray-800 mb-2">আর্টিকেল পাওয়া যায়নি</h1>
-          <p className="text-gray-500 mb-6">এই আর্টিকেলটি আর নেই বা সরানো হয়েছে।</p>
+          <p className="text-gray-500 mb-2">এই ডিভাইসে এই আর্টিকেলটি নেই।</p>
+          <p className="text-gray-400 text-sm mb-6">ব্যাকআপ থেকে রিস্টোর করুন অথবা নতুন করে যোগ করুন।</p>
           <Link
             href="/"
             className="inline-flex items-center gap-2 bg-[#1B5E20] text-white px-6 py-3 rounded-lg hover:bg-[#2e7d32] transition-colors"

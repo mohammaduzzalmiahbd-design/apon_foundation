@@ -51,29 +51,13 @@ import {
 
 export default function HomePage() {
   const { isAuthenticated, currentUser, login, logout, hasPermission } = useAuthStore();
-  const { loadFromServer, saveAllToServer, members, constitution, notices, transactions, gallery, socialLinks, receipts, vouchers, foundationInfo, isInitialized } = useStore();
+  const { members, constitution, notices, transactions, gallery, socialLinks, receipts, vouchers, foundationInfo, isInitialized } = useStore();
   const [activeSection, setActiveSection] = useState<string>('home');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
-
-  // পেজ লোড হলে সার্ভার থেকে ডাটা লোড
-  useEffect(() => {
-    loadFromServer();
-  }, [loadFromServer]);
-
-  // ডাটা পরিবর্তন হলে সার্ভারে সেভ (debounced)
-  useEffect(() => {
-    if (!isInitialized) return;
-    
-    const timeoutId = setTimeout(() => {
-      saveAllToServer();
-    }, 1000); // ১ সেকেন্ড অপেক্ষা করে সেভ
-
-    return () => clearTimeout(timeoutId);
-  }, [members, constitution, notices, transactions, gallery, socialLinks, receipts, vouchers, foundationInfo, isInitialized, saveAllToServer]);
 
   const handleLogin = () => {
     const result = login(loginEmail, loginPassword);

@@ -77,3 +77,21 @@ Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allow
  GET /sw.js 404 in 45ms (compile: 11ms, render: 34ms)
 ✅ ক্লাউডে সেভ হয়েছে!
  POST /api/data 200 in 125ms (compile: 31ms, render: 93ms)
+ GET /sw.js 404 in 145ms (compile: 48ms, render: 97ms)
+ GET /sw.js 404 in 50ms (compile: 12ms, render: 38ms)
+✅ ক্লাউডে সেভ হয়েছে!
+ POST /api/data 200 in 193ms (compile: 26ms, render: 167ms)
+ GET /sw.js 404 in 66ms (compile: 15ms, render: 51ms)
+✅ ক্লাউডে সেভ হয়েছে!
+ POST /api/data 200 in 128ms (compile: 3ms, render: 125ms)
+ GET /sw.js 404 in 143ms (compile: 60ms, render: 83ms)
+✅ ক্লাউডে সেভ হয়েছে!
+ POST /api/data 200 in 212ms (compile: 27ms, render: 185ms)
+ GET /sw.js 404 in 154ms (compile: 59ms, render: 96ms)
+ POST /api/data 404 in 41ms (compile: 11ms, render: 30ms)
+✓ Compiled in 180ms
+✓ Compiled in 232ms
+✓ Compiled in 164ms
+ GET /sw.js 404 in 132ms (compile: 51ms, render: 81ms)
+✓ Compiled in 203ms
+✓ Compiled in 199ms
